@@ -79,6 +79,7 @@ schemas
 setcap
 snapshotting
 sqlalchemy
+starlette
 stdin
 stdout
 sublicense

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Enable one time password (TOTP)</h2>
+    <div class="row">
+        <div class="col-lg-9">
+            <p>
+                To set up your one time password, scan the QR code with
+                an app like Authy, 1Password or Google Authenticator.
+            </p>
+            <canvas id="canvas"></canvas>
+            <p>
+                Your TOTP secret, in case you want to configure this manually, is:
+                <code>{{ secret }}</code>
+            </p>
+            {{ form_html }}
+        </div>
+        <div class="col-lg-3 alert alert-info">
+            TODO
+        </div>
+    </div>
+    <script src="https://www.unpkg.com/qrcode@1.5.1/build/qrcode.js"></script>
+    <script>
+        QRCode.toCanvas(canvas, "{{ totp_url }}", function (error) {
+            if (error) console.error(error)
+        })
+    </script>
+{% endblock %}

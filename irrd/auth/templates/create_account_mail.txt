@@ -1,0 +1,4 @@
+Create account:
+
+{{ url_for("ui:set_password", pk=user_pk, token=token, initial=1 ) }}
+

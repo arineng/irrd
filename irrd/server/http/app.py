@@ -2,21 +2,27 @@ import logging
 import os
 import signal
 
+import limits
 from ariadne.asgi import GraphQL
 from ariadne.asgi.handlers import GraphQLHTTPHandler
 from setproctitle import setproctitle
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.responses import RedirectResponse
 from starlette.routing import Mount, Route, WebSocketRoute
 from starlette.types import ASGIApp, Receive, Scope, Send
+from starlette_wtf import CSRFProtectMiddleware
 
 # Relative imports are not allowed in this file
 from irrd import ENV_MAIN_PROCESS_PID
-from irrd.conf import config_init
+from irrd.auth.auth import auth_middleware
+from irrd.auth.routes import UI_ROUTES
+from irrd.conf import config_init, get_setting
 from irrd.server.graphql import ENV_UVICORN_WORKER_CONFIG_PATH
 from irrd.server.graphql.extensions import QueryMetadataExtension, error_formatter
 from irrd.server.graphql.schema_builder import build_executable_schema
-from irrd.server.http.endpoints import (
+from irrd.server.http.endpoints_api import (
     ObjectSubmissionEndpoint,
     StatusEndpoint,
     SuspensionSubmissionEndpoint,
@@ -55,10 +61,14 @@ async def startup():
     try:
         app.state.database_handler = DatabaseHandler(readonly=True)
         app.state.preloader = Preloader(enable_queries=True)
+        app.state.rate_limiter_storage = limits.storage.storage_from_string(
+            "async+" + get_setting("redis_url")
+        )
+        app.state.rate_limiter = limits.aio.strategies.MovingWindowRateLimiter(app.state.rate_limiter_storage)
     except Exception as e:
         logger.critical(
             (
-                "HTTP worker failed to initialise preloader or database, "
+                "HTTP worker failed to initialise preloader, database or rate limiter, "
                 f"unable to start, terminating IRRd, traceback follows: {e}"
             ),
             exc_info=e,
@@ -75,6 +85,7 @@ async def shutdown():
     global app
     app.state.database_handler.close()
     app.state.preloader = None
+    app.state.rate_limiter = None
 
 
 graphql = GraphQL(
@@ -87,11 +98,13 @@ graphql = GraphQL(
 )
 
 routes = [
+    Route("/", lambda request: RedirectResponse("/ui/", status_code=302)),
     Mount("/v1/status", StatusEndpoint),
     Mount("/v1/whois", WhoisQueryEndpoint),
     Mount("/v1/submit", ObjectSubmissionEndpoint),
     Mount("/v1/suspension", SuspensionSubmissionEndpoint),
     Mount("/graphql", graphql),
+    Mount("/ui", name="ui", routes=UI_ROUTES),
     WebSocketRoute("/v1/event-stream/", EventStreamEndpoint),
     Route("/v1/event-stream/initial/", EventStreamInitialDownloadEndpoint),
 ]
@@ -111,5 +124,10 @@ app = Starlette(
     routes=routes,
     on_startup=[startup],
     on_shutdown=[shutdown],
-    middleware=[Middleware(MemoryTrimMiddleware)],
+    middleware=[
+        Middleware(MemoryTrimMiddleware),
+        Middleware(SessionMiddleware, secret_key="foo"),
+        Middleware(CSRFProtectMiddleware, csrf_secret="foo2"),
+        auth_middleware,
+    ],
 )

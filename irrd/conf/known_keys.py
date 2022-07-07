@@ -1,5 +1,5 @@
 from irrd.conf import AUTH_SET_CREATION_COMMON_KEY
-from irrd.rpsl.passwords import PASSWORD_HASHERS_ALL
+from irrd.rpsl.auth import PASSWORD_HASHERS_ALL
 from irrd.rpsl.rpsl_objects import OBJECT_CLASS_MAPPING, RPSLSet
 from irrd.vendor.dotted.collection import DottedDict
 

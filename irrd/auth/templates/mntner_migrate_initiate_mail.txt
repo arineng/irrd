@@ -1,0 +1,3 @@
+Complete migration:
+
+{{ url_for("ui:mntner_migrate_complete", pk=auth_mntner.pk, token=auth_mntner.migration_token ) }}

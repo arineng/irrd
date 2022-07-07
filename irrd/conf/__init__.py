@@ -22,6 +22,7 @@ RPKI_IRR_PSEUDO_SOURCE = "RPKI"
 ROUTEPREF_IMPORT_TIME = 3600
 AUTH_SET_CREATION_COMMON_KEY = "COMMON"
 SOCKET_DEFAULT_TIMEOUT = 30
+RPSL_MNTNER_AUTH_INTERNAL = "IRRD-INTERNAL-AUTH"
 
 
 LOGGING = {
@@ -48,6 +49,9 @@ LOGGING = {
         },
         "sqlalchemy": {
             "level": "WARNING",
+        },
+        "multipart": {
+            "level": "INFO",
         },
         "": {
             "handlers": ["console"],
@@ -297,7 +301,7 @@ class Configuration:
                     f" {valid_auth} if set"
                 )
 
-        from irrd.rpsl.passwords import PasswordHasherAvailability
+        from irrd.rpsl.auth import PasswordHasherAvailability
 
         valid_hasher_availability = [avl.value for avl in PasswordHasherAvailability]
         for hasher_name, setting in config.get("auth.password_hashers", {}).items():
