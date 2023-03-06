@@ -16,8 +16,6 @@ from starlette_wtf import CSRFProtectMiddleware
 
 # Relative imports are not allowed in this file
 from irrd import ENV_MAIN_PROCESS_PID
-from irrd.auth.auth import auth_middleware
-from irrd.auth.routes import UI_ROUTES
 from irrd.conf import config_init, get_setting
 from irrd.server.graphql import ENV_UVICORN_WORKER_CONFIG_PATH
 from irrd.server.graphql.extensions import QueryMetadataExtension, error_formatter
@@ -35,6 +33,8 @@ from irrd.server.http.event_stream import (
 from irrd.storage.database_handler import DatabaseHandler
 from irrd.storage.preload import Preloader
 from irrd.utils.process_support import memory_trim, set_traceback_handler
+from irrd.webui.auth.users import auth_middleware
+from irrd.webui.routes import UI_ROUTES
 
 logger = logging.getLogger(__name__)
 

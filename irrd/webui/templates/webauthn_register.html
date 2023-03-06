@@ -39,7 +39,7 @@
                 return;
             }
             const registrationResp = await fetch(
-                "{{ url_for('ui:webauthn_verify_registration_response') }}",
+                "{{ url_for('ui:auth:webauthn_verify_registration_response') }}",
                 {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
@@ -51,7 +51,7 @@
             );
             const registrationResult = await registrationResp.json();
             if (registrationResult.success) {
-                window.location.href = "{{ url_for('ui:mfa_status') }}";
+                window.location.href = "{{ url_for('ui:auth:mfa_status') }}";
             } else {
                 document.getElementById('error-box').style.display = "block";
             }

@@ -44,7 +44,7 @@
                     return;
                 }
                 const verificationResp = await fetch(
-                    "{{ url_for('ui:webauthn_verify_authentication_response') }}",
+                    "{{ url_for('ui:auth:webauthn_verify_authentication_response') }}",
                     {
                         method: "POST",
                         headers: {"Content-Type": "application/json"},

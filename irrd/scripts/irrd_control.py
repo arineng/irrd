@@ -10,13 +10,11 @@ import click
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from irrd.auth import (
-    UI_DEFAULT_DATETIME_FORMAT,
-    ORMSessionProvider,
-    session_provider_manager_sync,
-)
+from irrd.auth import ORMSessionProvider
 from irrd.conf import CONFIG_PATH_DEFAULT, config_init, get_setting
 from irrd.storage.models import AuthUser
+from irrd.webui import UI_DEFAULT_DATETIME_FORMAT
+from irrd.webui.helpers import session_provider_manager_sync
 
 
 def check_database_readonly(f):

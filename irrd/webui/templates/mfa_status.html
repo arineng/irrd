@@ -26,7 +26,7 @@
                 <td>{{ webauthn.created|datetime_format }}</td>
                 <td>{{ webauthn.last_used|datetime_format }}</td>
                 <td>
-                    <a href="{{ url_for('ui:webauthn_remove', webauthn=webauthn.pk) }}">
+                    <a href="{{ url_for('ui:auth:webauthn_remove', webauthn=webauthn.pk) }}">
                         [Remove]
                     </a>
                 </td>
@@ -35,7 +35,7 @@
         </tbody>
     </table>
 
-    <a href="{{ url_for('ui:webauthn_register') }}" class="btn btn-primary btn-block">
+    <a href="{{ url_for('ui:auth:webauthn_register') }}" class="btn btn-primary btn-block">
         Register a new security token
     </a>
 
@@ -44,13 +44,13 @@
     <p><em>Security tokens are safer than one time passwords.</em></p>
     {% if has_totp %}
         <p>One time password is enabled for your account.</p>
-        <a href="{{ url_for('ui:totp_remove') }}" class="btn btn-primary btn-block">
+        <a href="{{ url_for('ui:auth:totp_remove') }}" class="btn btn-primary btn-block">
         Remove one time password
         </a>
 
     {% else %}
         <p>One time password is not enabled for your account.</p>
-        <a href="{{ url_for('ui:totp_register') }}" class="btn btn-primary btn-block">
+        <a href="{{ url_for('ui:auth:totp_register') }}" class="btn btn-primary btn-block">
         Enable one time password
         </a>
     {% endif %}

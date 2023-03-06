@@ -1,4 +1,8 @@
-from typing import Optional
+import hashlib
+import secrets
+from base64 import urlsafe_b64decode, urlsafe_b64encode
+from datetime import date, timedelta
+from typing import Optional, Union
 
 import passlib
 import wtforms
@@ -15,8 +19,7 @@ from starlette.requests import HTTPConnection
 from starlette_wtf import StarletteForm
 
 from irrd.storage.models import AuthUser
-
-from . import ORMSessionProvider
+from irrd.storage.orm_provider import ORMSessionProvider
 
 
 class AuthProvider(UserProvider):
@@ -88,3 +91,36 @@ class CurrentPasswordForm(StarletteForm):
             return False
 
         return True
+
+
+PASSWORD_RESET_TOKEN_ROOT = date(2022, 1, 1)
+PASSWORD_RESET_SECRET = "aaaaa"
+PASSWORD_RESET_VALIDITY_DAYS = 7
+
+
+class AuthUserToken:
+    def __init__(self, user: AuthUser):
+        self.user_key = str(user.pk) + str(user.updated) + user.password
+
+    def generate_token(self) -> str:
+        expiry_date = date.today() + timedelta(days=PASSWORD_RESET_VALIDITY_DAYS)
+        expiry_days = expiry_date - PASSWORD_RESET_TOKEN_ROOT
+
+        hash_str = urlsafe_b64encode(self._hash(expiry_days.days)).decode("ascii")
+        return str(expiry_days.days) + "-" + hash_str
+
+    def validate_token(self, token: str) -> bool:
+        try:
+            expiry_days, input_hash_encoded = token.split("-", 1)
+            expiry_date = PASSWORD_RESET_TOKEN_ROOT + timedelta(days=int(expiry_days))
+
+            expected_hash = self._hash(expiry_days)
+            input_hash = urlsafe_b64decode(input_hash_encoded)
+
+            return expiry_date >= date.today() and secrets.compare_digest(input_hash, expected_hash)
+        except ValueError:
+            return False
+
+    def _hash(self, expiry_days: Union[int, str]) -> bytes:
+        hash_data = PASSWORD_RESET_SECRET + self.user_key + str(expiry_days)
+        return hashlib.sha224(hash_data.encode("utf-8")).digest()

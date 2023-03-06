@@ -42,19 +42,19 @@
                             {{ request.auth.user.email }}
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('ui:mfa_status') }}">Two-factor status</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ui:change_password') }}">Change password</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('ui:change_profile') }}">Change name/email</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('ui:auth:mfa_status') }}">Two-factor status</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('ui:auth:change_password') }}">Change password</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('ui:auth:change_profile') }}">Change name/email</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="{{ url_for('ui:logout') }}">Log out</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('ui:auth:logout') }}">Log out</a></li>
                         </ul>
                     </li>
 
                 {% else %}
-                    {{ nav_link('ui:login', 'Log in') }}
-                    {{ nav_link('ui:create_account', 'Create account') }}
+                    {{ nav_link('ui:auth:login', 'Log in') }}
+                    {{ nav_link('ui:auth:create_account', 'Create account') }}
                 {% endif %}
             </ul>
         </div>
@@ -70,7 +70,7 @@
         <div class="alert alert-warning" role="alert">
             Your account has override permissions
             You should
-            <a href="{{ url_for('ui:mfa_status') }}">enable two-factor authentication</a>.
+            <a href="{{ url_for('ui:auth:mfa_status') }}">enable two-factor authentication</a>.
 
         </div>
     {% endif %}

@@ -15,17 +15,17 @@ from irrd.storage.models import (
     JournalEntryOrigin,
     RPSLDatabaseObject,
 )
-
-from . import (
-    ORMSessionProvider,
-    authentication_required,
+from irrd.storage.orm_provider import ORMSessionProvider
+from irrd.utils.email import send_email
+from irrd.webui.auth.decorators import authentication_required
+from irrd.webui.auth.users import CurrentPasswordForm
+from irrd.webui.helpers import (
+    message,
     rate_limit_post_200,
-    render_form,
+    send_template_email,
     session_provider_manager,
-    template_context_render,
 )
-from .auth import CurrentPasswordForm
-from .utils import message, notify_mntner, send_template_email
+from irrd.webui.rendering import render_form, template_context_render
 
 
 class PermissionAddForm(CurrentPasswordForm):
@@ -330,3 +330,33 @@ async def mntner_migrate_complete(request: Request, session_provider: ORMSession
 
     message(request, f"The mntner {auth_mntner.rpsl_mntner_pk} has been migrated.")
     return RedirectResponse(request.url_for("ui:user_detail"), status_code=302)
+
+
+async def notify_mntner(session_provider, user: AuthUser, mntner: AuthMntner, explanation: str):
+    query = session_provider.session.query(RPSLDatabaseObject).outerjoin(AuthMntner)
+    query = query.filter(
+        RPSLDatabaseObject.pk == str(mntner.rpsl_mntner_obj_id),
+    )
+    rpsl_mntner = await session_provider.run(query.one)
+    recipients = rpsl_mntner.parsed_data.get("mnt-nfy", []) + rpsl_mntner.parsed_data.get("notify", [])
+
+    subject = f"Notification of {mntner.rpsl_mntner_source} database changes"
+    body = get_setting("email.notification_header", "").format(sources_str=mntner.rpsl_mntner_source)
+    body += textwrap.dedent(
+        f"""
+        This message is auto-generated.
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Internal authentication was changed for
+        mntner {mntner.rpsl_mntner_pk} in source {mntner.rpsl_mntner_source}
+        by user {user.name} ({user.email}).
+    """
+    )
+    body += f"\n{explanation.strip()}\n"
+    body += textwrap.dedent(
+        """
+        Note that this change is not visible in the RPSL object,
+        as these authentication settings are stored internally in IRRD.
+    """
+    )
+    for recipient in recipients:
+        send_email(recipient, subject, body)

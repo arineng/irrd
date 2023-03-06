@@ -1,24 +1,18 @@
 from collections import defaultdict
-from typing import Optional
 
 from asgiref.sync import sync_to_async
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette_wtf import csrf_protect, csrf_token
 
+from irrd.conf import get_setting
 from irrd.storage.models import AuthUser, RPSLDatabaseObject
+from irrd.storage.orm_provider import ORMSessionProvider
 from irrd.storage.queries import RPSLDatabaseQuery
 from irrd.updates.handler import ChangeSubmissionHandler
-
-from ..conf import get_setting
-from ..utils.text import remove_auth_hashes
-from . import (
-    ORMSessionProvider,
-    authentication_required,
-    mark_user_mfa_incomplete,
-    session_provider_manager,
-    template_context_render,
-)
+from irrd.webui.auth.decorators import authentication_required, mark_user_mfa_incomplete
+from irrd.webui.helpers import filter_auth_hash_non_mntner, session_provider_manager
+from irrd.webui.rendering import template_context_render
 
 
 async def index(request: Request) -> Response:
@@ -30,6 +24,15 @@ async def index(request: Request) -> Response:
         request,
         {"mirrored_sources": mirrored_sources},
     )
+
+
+@session_provider_manager
+@authentication_required
+async def user_detail(request: Request, session_provider: ORMSessionProvider) -> Response:
+    # The user detail page needs a rich and bound instance of AuthUser
+    query = session_provider.session.query(AuthUser).filter_by(email=request.auth.user.email)
+    bound_user = await session_provider.run(query.one)
+    return template_context_render("user_detail.html", request, {"user": bound_user})
 
 
 @session_provider_manager
@@ -156,26 +159,3 @@ async def rpsl_update(
             },
         )
     return Response(status_code=405)  # pragma: no cover
-
-
-@session_provider_manager
-@authentication_required
-async def user_detail(request: Request, session_provider: ORMSessionProvider) -> Response:
-    # The user detail page needs a rich and bound instance of AuthUser
-    query = session_provider.session.query(AuthUser).filter_by(email=request.auth.user.email)
-    bound_user = await session_provider.run(query.one)
-    return template_context_render("user_detail.html", request, {"user": bound_user})
-
-
-def filter_auth_hash_non_mntner(user: Optional[AuthUser], rpsl_object: RPSLDatabaseObject) -> str:
-    if user:
-        user_mntners = [
-            (mntner.rpsl_mntner_pk, mntner.rpsl_mntner_source) for mntner in user.mntners_user_management
-        ]
-
-        if rpsl_object.object_class != "mntner" or (rpsl_object.rpsl_pk, rpsl_object.source) in user_mntners:
-            rpsl_object.hashes_hidden = False
-            return rpsl_object.object_text
-
-    rpsl_object.hashes_hidden = True
-    return remove_auth_hashes(rpsl_object.object_text)
