@@ -8,9 +8,10 @@ from pathlib import Path
 
 import click
 
+
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from irrd.auth import ORMSessionProvider
+from irrd.storage.orm_provider import ORMSessionProvider
 from irrd.conf import CONFIG_PATH_DEFAULT, config_init, get_setting
 from irrd.storage.models import AuthUser
 from irrd.webui import UI_DEFAULT_DATETIME_FORMAT

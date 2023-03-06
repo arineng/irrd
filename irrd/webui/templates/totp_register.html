@@ -18,7 +18,7 @@
             TODO
         </div>
     </div>
-    <script src="https://www.unpkg.com/qrcode@1.5.1/build/qrcode.js"></script>
+    <script src="/static/js/qrcode.js"></script>
     <script>
         QRCode.toCanvas(canvas, "{{ totp_url }}", function (error) {
             if (error) console.error(error)

@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-9">
             <p>
-                Your account is configured to use two-factor authentication.
+                Your need to authenticate with your two-factor authentication.
             </p>
             <div id="error-box" class="alert alert-danger" role="alert" style="display: none">
                 Authentication did not succeed.
@@ -28,7 +28,7 @@
         </div>
     </div>
     {% if has_webauthn %}
-        <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.es5.umd.min.js"></script>
+        <script src="/static/js/simplewebauthn-browser-es5-umd.js"></script>
         <script>
             document.getElementById('webauthn-authenticate').addEventListener('click', async () => {
                 document.getElementById('error-box').style.display = "none";

@@ -1,6 +1,7 @@
 import logging
 import os
 import signal
+from pathlib import Path
 
 import limits
 from ariadne.asgi import GraphQL
@@ -11,6 +12,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
 from starlette.routing import Mount, Route, WebSocketRoute
+from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp, Receive, Scope, Send
 from starlette_wtf import CSRFProtectMiddleware
 
@@ -97,6 +99,9 @@ graphql = GraphQL(
     error_formatter=error_formatter,
 )
 
+STATIC_DIR = templates = Path(__file__).parent.parent.parent / "webui" / "static"
+
+
 routes = [
     Route("/", lambda request: RedirectResponse("/ui/", status_code=302)),
     Mount("/v1/status", StatusEndpoint),
@@ -105,6 +110,7 @@ routes = [
     Mount("/v1/suspension", SuspensionSubmissionEndpoint),
     Mount("/graphql", graphql),
     Mount("/ui", name="ui", routes=UI_ROUTES),
+    Mount("/static", name="static", app=StaticFiles(directory=STATIC_DIR)),
     WebSocketRoute("/v1/event-stream/", EventStreamEndpoint),
     Route("/v1/event-stream/initial/", EventStreamInitialDownloadEndpoint),
 ]
