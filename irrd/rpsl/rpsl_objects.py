@@ -42,6 +42,7 @@ class RPSLAsBlock(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -58,6 +59,7 @@ class RPSLAsSet(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
     def clean_for_create(self) -> bool:
@@ -95,6 +97,7 @@ class RPSLAutNum(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, optional=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -114,6 +117,7 @@ class RPSLDomain(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, optional=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -130,6 +134,7 @@ class RPSLFilterSet(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -153,6 +158,7 @@ class RPSLInetRtr(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -172,6 +178,7 @@ class RPSLInet6Num(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -191,6 +198,7 @@ class RPSLInetnum(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -208,6 +216,7 @@ class RPSLKeyCert(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
     def clean(self) -> bool:
@@ -290,6 +299,7 @@ class RPSLMntner(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
     def clean(self):
@@ -368,6 +378,7 @@ class RPSLPeeringSet(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -384,6 +395,7 @@ class RPSLPerson(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -403,6 +415,7 @@ class RPSLRole(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -429,6 +442,7 @@ class RPSLRoute(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -446,6 +460,7 @@ class RPSLRouteSet(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -472,6 +487,7 @@ class RPSLRoute6(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
 
@@ -489,8 +505,28 @@ class RPSLRtrSet(RPSLObject):
         ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
         ('changed', RPSLChangedField(optional=True, multiple=True)),
         ('source', RPSLGenericNameField()),
+        ('org', RPSLReferenceField(lookup_key=True, optional=True, multiple=True, referring=["organisation"])),
     ])
 
+class RPSLOrganisation(RPSLObject):
+    fields = OrderedDict([
+        ('organisation', RPSLGenericNameField(primary_key=True, lookup_key=True, allowed_prefixes=['ORG'])),
+        ('org-name', RPSLTextField(lookup_key=True)),
+        ('org-type', RPSLTextField()),
+        ('descr', RPSLTextField(multiple=True, optional=True)),
+        ('country', RPSLTextField(multiple=True)),
+        ('phone', RPSLTextField(multiple=True)),
+        ('fax-no', RPSLTextField(optional=True, multiple=True)),
+        ('e-mail', RPSLEmailField(multiple=True)),
+        ('mnt-ref', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
+        ('address', RPSLTextField(multiple=True)),
+        ('notify', RPSLEmailField(optional=True, multiple=True)),
+        ('mnt-by', RPSLReferenceListField(lookup_key=True, multiple=True, referring=['mntner'])),
+        ('remarks', RPSLTextField(optional=True, multiple=True)),
+        ('notify', RPSLEmailField(optional=True, multiple=True)),
+        ('changed', RPSLChangedField(optional=True, multiple=True)),
+        ('source', RPSLGenericNameField()),
+    ])
 
 OBJECT_CLASS_MAPPING = {
     'as-block': RPSLAsBlock,
@@ -503,6 +539,7 @@ OBJECT_CLASS_MAPPING = {
     'inetnum': RPSLInetnum,
     'key-cert': RPSLKeyCert,
     'mntner': RPSLMntner,
+    'organisation': RPSLOrganisation,
     'peering-set': RPSLPeeringSet,
     'person': RPSLPerson,
     'role': RPSLRole,
