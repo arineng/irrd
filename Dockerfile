@@ -1,9 +1,9 @@
-FROM pypy:3.9-7.3.11 as setup
+FROM python:3.9.16 as setup
 
 COPY . .
 RUN ./setup.py sdist bdist_wheel
 
-FROM pypy:3.9-7.3.11
+FROM python:3.9.16
 
 LABEL Remarks="NTT IRRD4"
 
@@ -26,13 +26,13 @@ RUN groupadd -r -g 777 irrd && useradd -m -r -u 777 -g irrd irrd
 
 USER irrd
 
-RUN pypy3 -m venv /home/irrd/irrd-venv
+RUN python -m venv /home/irrd/irrd-venv
 
-RUN /home/irrd/irrd-venv/bin/pip3 install --no-cache-dir --upgrade pip
+RUN /home/irrd/irrd-venv/bin/pip install --no-cache-dir --upgrade pip
 
 COPY --from=setup dist/irrd-*.tar.gz /tmp/irrd.tar.gz
 
-RUN /home/irrd/irrd-venv/bin/pip3 install --no-cache-dir file:///tmp/irrd.tar.gz
+RUN /home/irrd/irrd-venv/bin/pip install --no-cache-dir file:///tmp/irrd.tar.gz
 
 USER root
 
@@ -40,4 +40,4 @@ RUN rm -rf /tmp/irrd.tar.gz
 
 USER irrd
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/tini", "--", "entrypoint.sh"]
